@@ -2,7 +2,6 @@ package alex.m.programming.challenge
 
 import alex.m.programming.challenge.domain.{Event, ResponseEvent}
 import alex.m.programming.challenge.service.{Error, Ok, ProcessEventService}
-import com.google.gson.Gson
 import org.scalatra._
 import org.slf4j.{Logger, LoggerFactory}
 
