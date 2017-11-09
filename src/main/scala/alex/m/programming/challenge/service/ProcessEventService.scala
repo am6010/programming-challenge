@@ -3,7 +3,6 @@ package alex.m.programming.challenge.service
 import java.io.FileWriter
 
 import alex.m.programming.challenge.domain.{Event, ResponseEvent}
-import com.google.gson.Gson
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.util.Try
@@ -30,5 +29,12 @@ class LoggerService(private val filePath: String) extends ProcessEventService {
       writer.close()
       Ok(ResponseEvent(event))
     }.getOrElse(Error("The file doesn't exists"))
+  }
+}
+
+class MockService extends ProcessEventService {
+
+  def processEvent(event: Event): Result = {
+    Ok(ResponseEvent(event))
   }
 }
