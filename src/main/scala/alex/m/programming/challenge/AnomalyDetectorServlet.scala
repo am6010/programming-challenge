@@ -19,7 +19,7 @@ class AnomalyDetectorServlet(private val eventProcessingService: ProcessEventSer
     val event = Event.fromJson(body)
     val result = eventProcessingService.processEvent(event)
     result match {
-      case Error(msg) => response.addHeader("NACK", msg)
+      case Error(msg) => InternalServerError(msg)
       case Ok(responseEvent) => ResponseEvent.toJson(responseEvent)
     }
   }

@@ -35,6 +35,10 @@ class LoggerService(private val filePath: String) extends ProcessEventService {
 class MockService extends ProcessEventService {
 
   def processEvent(event: Event): Result = {
-    Ok(ResponseEvent(event))
+    if (event.sensorId != "invalidTest") {
+      Ok(ResponseEvent(event))
+    } else {
+      Error("Error message!")
+    }
   }
 }
