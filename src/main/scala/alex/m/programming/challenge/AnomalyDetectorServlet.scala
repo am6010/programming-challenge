@@ -10,16 +10,12 @@ class AnomalyDetectorServlet(private val eventProcessingService: ProcessEventSer
 
   private val logger: Logger =  LoggerFactory.getLogger(getClass)
 
-  get("/") {
-    "Hello World!!"
-  }
-
   post("/api/event") {
     val body = request.body
     val event = Event.fromJson(body)
     val result = eventProcessingService.processEvent(event)
     result match {
-      case Error(msg) => response.addHeader("NACK", msg)
+      case Error(msg) => InternalServerError(msg)
       case Ok(responseEvent) => ResponseEvent.toJson(responseEvent)
     }
   }

@@ -33,6 +33,9 @@ object ResponseEvent extends gsonHelper[ResponseEvent] {
 
   def apply(event: Event, status: String): ResponseEvent =
     new ResponseEvent(event.eventId, event.sensorId, event.timestamp, event.value, status)
+
+  def apply(event: Event, status: String, value: Double): ResponseEvent =
+    new ResponseEvent(event.eventId, event.sensorId, event.timestamp, value, status)
 }
 
 object Event extends gsonHelper[Event]{

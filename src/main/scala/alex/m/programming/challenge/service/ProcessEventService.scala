@@ -59,9 +59,28 @@ class ModelBasedService(private val modelsDirPath: String) extends ProcessEventS
       .get(event.sensorId)
       .map { model =>
         println(model)
-        val overThreshold = model.threshold > event.value
-        val status = if (overThreshold) "NO_ANOMALY" else "ANOMALY"
+        val belowThreshold = model.threshold > event.value
+        val status = if (belowThreshold) "NO_ANOMALY" else "ANOMALY"
         Ok(ResponseEvent(event, status))
+      }.getOrElse(Ok(ResponseEvent(event)))
+  }
+}
+
+class AvgModelService(private val eventToKeep: Int, private val threshold: Double)
+  extends ProcessEventService {
+
+  private var sensorsStats = Map[String, Seq[Double]]()
+
+  def processEvent(event: Event): Result = {
+    val oldStats = sensorsStats.getOrElse(event.sensorId, Seq())
+    val newStats = (Seq(event.value) ++ oldStats).take(eventToKeep)
+    sensorsStats = sensorsStats + (event.sensorId -> newStats)
+    sensorsStats
+      .get(event.sensorId)
+      .map {stats =>
+        val avg =  stats.sum / stats.size
+        val status = if (avg > threshold) "ANOMALY" else "NO_ANOMALY"
+        Ok(ResponseEvent(event, status, avg))
       }.getOrElse(Ok(ResponseEvent(event)))
   }
 }
@@ -69,6 +88,10 @@ class ModelBasedService(private val modelsDirPath: String) extends ProcessEventS
 class MockService extends ProcessEventService {
 
   def processEvent(event: Event): Result = {
-    Ok(ResponseEvent(event))
+    if (event.sensorId != "invalidTest") {
+      Ok(ResponseEvent(event))
+    } else {
+      Error("Error message!")
+    }
   }
 }
