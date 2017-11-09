@@ -2,7 +2,7 @@ package service
 
 import java.io.File
 
-import alex.m.programming.challenge.domain.Event
+import alex.m.programming.challenge.domain.{Event, ResponseEvent}
 import alex.m.programming.challenge.service.{Error, LoggerService, Ok, Result}
 import com.google.gson.Gson
 import org.junit.runner.RunWith
@@ -27,7 +27,7 @@ class LoggerServiceTest extends FunSuite{
     new SetUp {
       val event = Event("eventId", "sensorId", 10000L, 29.99)
       val result: Result = service.processEvent(event)
-      assert(result === Ok)
+      assert(result === Ok(ResponseEvent("eventId","sensorId",10000,29.99, "NO_MODEL" , "", "")) )
       file = new File("test-log.txt")
       assert(file exists)
       val value: String = Source.fromFile(file).mkString
@@ -42,7 +42,8 @@ class LoggerServiceTest extends FunSuite{
         Event("eventId2", "sensorId", 10000L, 29.99),
         Event("eventId3", "sensorId", 10000L, 29.99))
 
-      val allOk: Boolean = eventSeq.map(service.processEvent).forall(_ == Ok)
+      val allOk: Boolean = eventSeq.map(event => (event , service.processEvent(event)))
+        .forall {case (event, result) => Ok(ResponseEvent(event)) == result}
       assert(allOk)
       file = new File("test-log.txt")
       assert(file exists)

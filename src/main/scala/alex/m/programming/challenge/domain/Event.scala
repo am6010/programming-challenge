@@ -30,7 +30,14 @@ trait gsonHelper[T] {
 object ResponseEvent extends gsonHelper[ResponseEvent] {
   def apply(event: Event): ResponseEvent =
     new ResponseEvent(event.eventId, event.sensorId, event.timestamp, event.value)
+
+  def apply(event: Event, status: String): ResponseEvent =
+    new ResponseEvent(event.eventId, event.sensorId, event.timestamp, event.value, status)
 }
 
 object Event extends gsonHelper[Event]{
 }
+
+case class Model(sensorId: String, model: String, threshold: Double)
+
+object Model extends gsonHelper[Model]
