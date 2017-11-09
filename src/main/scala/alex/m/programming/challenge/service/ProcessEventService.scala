@@ -69,6 +69,10 @@ class ModelBasedService(private val modelsDirPath: String) extends ProcessEventS
 class MockService extends ProcessEventService {
 
   def processEvent(event: Event): Result = {
-    Ok(ResponseEvent(event))
+    if (event.sensorId != "invalidTest") {
+      Ok(ResponseEvent(event))
+    } else {
+      Error("Error message!")
+    }
   }
 }
